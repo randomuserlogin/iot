@@ -1,0 +1,162 @@
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+Connection: close
+Refresh: 30
+
+
+<!DOCTYPE HTML>
+<html>
+<head> <title>Online PPM</title> </head>
+<body>
+Anfrage Nr.:
+
+<br/>
+<br/>
+
+<canvas id="Canvas1" width="1000" height="400" style="border:1px solid #001234">
+</canvas>
+<canvas id="Canvas2" width="1000" height="400" style="border:1px solid #001234">
+</canvas>
+<canvas id="Canvas3" width="1000" height="400" style="border:1px solid #001234">
+</canvas>
+<canvas id="Canvas4" width="1000" height="400" style="border:1px solid #001234">
+</canvas>
+
+<br/>
+<br/>
+
+
+
+<script type="text/javascript">
+
+    function drawGraph(canvas, readings, xLabels ,printLabelsX, printVertLabels)
+    {	
+        var windowWidth = window.innerWidth;
+        var windowHeight = window.innerHeight;
+        
+        var borderWidthUp=20;
+        var borderWidthDown=100;
+        var borderWidthLeft=60;
+        var borderWidthRight=10;
+         
+        var minReading=Math.min.apply(null,readings);   
+        var maxReading=Math.max.apply(null,readings);
+        var numOfReadings=readings.length;       
+
+        var context=canvas.getContext("2d");
+        var xMin=borderWidthLeft;          
+        var xMax=canvas.width - borderWidthRight;
+        var yMax=borderWidthUp;            
+        var yMin=canvas.height - borderWidthDown;  
+        var gridVertInc=(canvas.height - borderWidthUp - borderWidthDown)/4.0; 
+        var readingVertInc=(maxReading- minReading) / 4.0; 
+        var yScale=(yMin- yMax)/(maxReading-minReading);  
+        var xScale=(xMax-xMin)/(numOfReadings-1);
+        var grd = context.createLinearGradient(0, 700, 0, 0);
+
+        grd.addColorStop(0,"grey");
+        grd.addColorStop(1,"white");
+        context.fillStyle = grd;
+        context.fillRect(0,0, canvas.width,canvas.height); 
+        context.font="10pt Arial";
+        context.lineWidth=1; 
+        context.strokeStyle="#A0A0A0"; 
+        context.fillStyle="#000000";
+        context.textAlign="right";
+
+        context.beginPath();
+
+        var i;
+        var tmp;
+        
+        for(i=0; i<5; i++)
+        {
+            tmp=minReading+(4-i)*readingVertInc; 
+            context.fillText(tmp.toFixed(2),xMin-5,yMax + i*gridVertInc);
+            context.moveTo(xMin,yMax+i*gridVertInc); 
+            context.lineTo(xMax,yMax+i*gridVertInc);
+        }  
+        context.textAlign="center";
+
+        for(i=0;i<numOfReadings;i++)
+        {
+            context.moveTo(xMin+i*xScale,yMin); 
+            context.lineTo(xMin+i*xScale,yMax);
+        }  
+        context.stroke();
+                
+        // plot x labels 
+        
+        if(printLabelsX == true)
+        {   
+            if(printVertLabels == true)
+            {
+                context.save(); 
+                context.translate( xMin,yMin+50);
+                context.rotate(Math.PI/180*270);
+            
+                for(i=0;i<numOfReadings;i++)
+                {       
+                    context.fillText(xLabels[i],0,i*xScale);
+                }
+                context.restore();
+            }
+            else
+            {
+                for(i=0;i<numOfReadings;i++)
+                {
+                    //if(i%labelsXwidth == 0)
+                    //{
+                    context.fillText(xLabels[i],xMin + i*xScale ,yMin + 20);
+                    //}
+                }       
+                context.stroke();
+            }
+        }
+        
+        // set color red
+        context.strokeStyle="#ff0000";
+        
+        // draw lines between data points
+        context.beginPath();
+  
+        context.moveTo(xMin,yMin-(readings[0]-minReading)*yScale);
+        
+        for(i=1;i<numOfReadings;i++)
+        {
+            context.lineTo(xMin+i*xScale,yMin-(readings[i]-minReading)*yScale);
+        }
+        context.stroke();
+        
+        // draw data points 
+        context.beginPath();
+        context.lineWidth=3;	
+
+        for(i=0;i<numOfReadings;i++)
+        {
+            context.moveTo(xMin+i*xScale,yMin-(readings[i]-minReading)*yScale);   
+            context.arc(xMin+i*xScale,yMin-(readings[i]-minReading)*yScale,2,0,2*Math.PI,false);
+        } 
+        context.stroke();
+    }
+	var envelope = [76.00,107.00,164.00,184.00,188.00,183.00,178.00,162.00,149.00,137.00,105.00,83.00,77.00,115.00,146.00,150.00,138.00,106.00,90.00,75.00,65.00,110.00,135.00,156.00,184.00,186.00,185.00,174.00,126.00,66.00,83.00,130.00,162.00,184.00,180.00,184.00,182.00,168.00,140.00,116.00,78.00,66.00,97.00,122.00,166.00,164.00,154.00,134.00,102.00,86.00,75.00,93.00,117.00,131.00,139.00,173.00,185.00,183.00,165.00,97.00,61.00,59.00,101.00,127.00,144.00,158.00,160.00,147.00,104.00,82.00,60.00,76.00,110.00,124.00,148.00,162.00,151.00,142.00,141.00,101.00,79.00,66.00,72.00,111.00,143.00,160.00,159.00,123.00,101.00,84.00,31.00,68.00,120.00,144.00,150.00,144.00,145.00,128.00,102.00,73.00,71.00,66.00,80.00,112.00,128.00,144.00,152.00,142.00,132.00,119.00,95.00,79.00,55.00,73.00,107.00,115.00,120.00,113.00,85.00,61.00,41.00,84.00,109.00,129.00,146.00,142.00,152.00,164.00,151.00,153.00,143.00,85.00,60.00,87.00,130.00,143.00,145.00,141.00,116.00,81.00,73.00,81.00,109.00,117.00,127.00,155.00,154.00,154.00,159.00,139.00,131.00,103.00,92.00,118.00,133.00,138.00,153.00,150.00,141.00,111.00,99.00,90.00,103.00,111.00,117.00,125.00,121.00,113.00,94.00,86.00,89.00,107.00,117.00,149.00,158.00,157.00,149.00,148.00,138.00,111.00,96.00,78.00,96.00,121.00,142.00,164.00,164.00,154.00,139.00,103.00,85.00,83.00,91.00,121.00,134.00,141.00,131.00,107.00,48.00,49.00,74.00,99.00,132.00,138.00,142.00,142.00,136.00,124.00,98.00,88.00,92.00,100.00,116.00,120.00,115.00,108.00,101.00,94.00,69.00,59.00,61.00,82.00,95.00,123.00,127.00,131.00,120.00,101.00,93.00,88.00,88.00,96.00,100.00,130.00,137.00,142.00,138.00,101.00,68.00,74.00,106.00,131.00,150.00,143.00,137.00,135.00,121.00,105.00,91.00,93.00,95.00,109.00,138.00,148.00,138.00,124.00];
+
+	var spectrum = [139.63,154.02,133.09,140.40,128.16,140.05,145.05,146.69,137.63,128.93,157.01,155.34,148.39,166.02,168.07,166.45,144.26,151.57,174.82,154.89,149.90,175.80,176.99,175.16,171.10,176.12,672.69,236.54,260.23,226.61,234.15,261.35,358.21,277.78,269.16,270.97,353.55,403.61,461.94,497.26,626.55,473.50,709.38,1010.48,1145.38,1329.75,1672.22,2783.04,2677.68,8043.82,12311.66,40330.84,62295.49,21083.99,14769.34,43548.26,4944.43,3115.01,1587.06,1127.73,953.92,541.09,508.57,495.99,185.73,356.06,289.98,306.14,181.30,196.13,209.90,239.19,200.75,208.62,166.24,145.75,145.33,163.80,139.68,173.01,124.89,117.97,121.91,135.97,111.54,146.43,110.73,129.59,115.97,151.14,177.59,108.12,123.88,92.61,109.66,94.69,106.38,105.05,114.49,128.87,111.21,238.98,216.77,176.86,169.35,141.09,147.59,89.68,78.92,90.10,79.74,63.21,107.73,99.38,61.47,88.74,84.14,68.77,81.36,101.22,70.20,74.64,63.77,54.87,81.20,95.50,75.71,74.39];
+
+	var peakHistory = [1881.21,1904.37,1881.70,1909.05,1886.41,1913.34,1881.22,1917.83,1882.52,1908.93,1890.80,1921.01,1891.09,1918.05,1898.92,1920.49,1899.38,1925.66,1904.14,1919.65,1909.03,1999.61,1999.21,1943.98,1999.38,1999.34,1931.28,1939.81,1922.68,1952.00,1933.31,1959.32,1931.12,1999.01,1999.30,1935.69,1935.73,1999.18,1998.54,1999.21,1999.22,1998.90,1998.48,1999.02,1998.92,1995.87,1996.91,1917.39,1994.83,1994.99,1994.88,1994.96,1994.66,1994.32,1994.72,1994.43,1993.32,1993.92,1873.24,1994.73,1909.27,1836.40,1863.49,1877.32,1908.77,1877.74,1903.85,1872.66,1899.71,1868.84,1896.34,1863.83,1890.84,1864.10,1895.41,1868.17,1891.37,1863.84,1897.36,1868.14,1895.58,1872.71,1900.42,1881.15,1903.99,1872.86,1904.10,1876.72,1900.08,1881.51,1904.41,1876.83,1904.17,1873.92,1904.39,1886.35,1908.91,1888.49,1916.78,1884.27];
+
+	var magHistory = [107445.18,133019.01,203269.20,149571.75,99979.11,181482.59,82665.14,141558.95,48941.17,114188.27,99311.26,59443.82,81407.46,163660.75,69605.83,54377.78,72373.04,34025.96,98965.17,50981.15,60523.41,78910.67,69720.66,66084.29,56696.94,118322.60,78946.52,57878.55,99296.64,41228.69,4627.43,83668.74,69682.87,94136.35,114300.59,35253.16,48251.99,106076.71,55977.85,62480.58,94769.46,85820.92,66612.85,61144.98,50458.89,34201.14,16803.31,52100.91,47903.90,105637.20,116077.23,79323.89,120186.67,80553.32,116130.54,105067.83,36955.68,52932.58,77210.09,87448.10,102391.19,76624.01,134626.85,126567.67,151766.29,91546.64,98802.64,132211.68,190490.78,102271.81,62220.37,126699.51,132864.78,95996.82,129088.46,159561.23,74393.97,123843.46,61893.24,112753.02,120759.69,154937.42,56361.94,87868.88,105922.77,110173.67,132098.37,87341.25,105025.10,146329.81,131677.00,132619.84,155819.39,77249.38,162374.87,169090.59,205814.18,52828.07,64895.93,38711.42];
+
+
+    var labels= ["15.03.20, 18:00", "15.03.20, 19:00", "15.03.20, 20:00", "15.03.20, 21:00", "auf", "dem" , "See"];
+    
+    drawGraph(document.getElementById("Canvas1"), envelope, labels,false, false);
+    drawGraph(document.getElementById("Canvas2"), spectrum, labels,false, true);
+    drawGraph(document.getElementById("Canvas3"), peakHistory,  labels,false, false);
+    drawGraph(document.getElementById("Canvas4"), magHistory,  labels,false, false);
+
+  </script>
+ </body>
+</html>
+	Average# 0 of 0	PeakFreq: 1884.27	PeakMag: 38711.42; 
