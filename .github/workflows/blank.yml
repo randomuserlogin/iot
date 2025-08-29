@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
-name: Generate IoT Dashboard
-  uses: galihru/iotgithub@v1.0.2
-  with:
-    json_filename: 'data.json'
-    html_filename: 'index.html'
-    css_filename: 'styles.css'
-    site_title: 'My IoT Dashboard'
-    chart_title: 'IoT Data Chart'
+#name: Generate IoT Dashboard
+#  uses: galihru/iotgithub@v1.0.2
+#  with:
+#    json_filename: 'data.json'
+#    html_filename: 'index.html'
+#    css_filename: 'styles.css'
+#    site_title: 'My IoT Dashboard'
+#    chart_title: 'IoT Data Chart'
 
 name: Commit and push changes
   run: |
